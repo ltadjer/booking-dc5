@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  name         String?
+  password     String
+  role         UserRole      @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+}
+
+model Classroom {
+  id           Int           @id @default(autoincrement())
+  name         String
+  capacity     Int
+  equipment    String[] // Liste des équipements (vidéoprojecteur, tableau blanc, etc.)
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          Int       @id @default(autoincrement())
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroomId Int
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}

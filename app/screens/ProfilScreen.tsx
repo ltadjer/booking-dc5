@@ -16,7 +16,8 @@ const ProfilScreen = () => {
 
     return (
     <View>
-      <Text>Profil ddd</Text>
+      <Text>Profil</Text>
+        {user}
         <Text>{user?.email}</Text>
         <Button mode="contained" onPress={handleSignOut}>
             Sign Out

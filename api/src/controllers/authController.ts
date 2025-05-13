@@ -84,6 +84,8 @@ export const signIn = async (c: Context) => {
       where: { email: validatedData.email },
     });
 
+    console.log("user", user);
+
     if (!user) {
       return c.json({ error: "Email ou mot de passe incorrect" }, 401);
     }
@@ -121,5 +123,15 @@ export const signIn = async (c: Context) => {
     }
     console.error("Erreur lors de la connexion:", error);
     return c.json({ error: "Erreur lors de la connexion" }, 500);
+  }
+};
+
+
+export const signOut = async (c: Context) => {
+  try {
+    return c.json({ message: "Déconnexion réussie" });
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion:", error);
+    return c.json({ error: "Erreur lors de la déconnexion" }, 500);
   }
 };

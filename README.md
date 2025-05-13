@@ -31,22 +31,22 @@ npm install yup @hookform/resolvers
 
 ### Niveau 1 - Configuration des écrans et de la navigation
 
-- [ ] Configuration du projet et installation des dépendances
-- [ ] Mise en place de la navigation (Stack et Tab)
+- [x] Configuration du projet et installation des dépendances
+- [x] Mise en place de la navigation (Stack et Tab)
 
 ### Niveau 2 - Premier appel API
 
-- [ ] Configuration des appels API pour les salles de classe
-- [ ] Affichage de la liste des classes
+- [x] Configuration des appels API pour les salles de classe
+- [x] Affichage de la liste des classes
 
 ### Niveau 3 - Authentification
 
-- [ ] Création des écrans de base (Login, Register)
-- [ ] Implémentation de l'authentification (login/register)
+- [x] Création des écrans de base (Login, Register)
+- [x] Implémentation de l'authentification (login/register)
 
 ### Niveau 4 - Context
 
-- [ ] Création d'un context pour l'authentification
+- [x] Création d'un context pour l'authentification
 - [ ] Gestion du stockage du token avec AsyncStorage
 
 ### Niveau 5 - Profil utilisateur

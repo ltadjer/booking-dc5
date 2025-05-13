@@ -2,20 +2,27 @@ import { StyleSheet, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigation } from "@react-navigation/native";
 
-const SigninScreen = () => {
+const SignupScreen = () => {
     const [credentials, setCredentials] = useState({
         email: "",
         password: "",
+        confirmPassword: "",
     });
 
-    const { signin } = useAuth();
-    const navigation = useNavigation();
+    const { signup } = useAuth();
+
+    const handleSubmit = () => {
+        if (credentials.password !== credentials.confirmPassword) {
+            alert("Les mots de passe ne correspondent pas");
+            return;
+        }
+        signup(credentials.email, credentials.password);
+    };
 
     return (
         <View style={styles.container}>
-            <Text>Sign In</Text>
+            <Text>Sign Up</Text>
 
             <TextInput
                 placeholder="Email"
@@ -23,28 +30,31 @@ const SigninScreen = () => {
                     setCredentials({ ...credentials, email: text })
                 }
             />
+
             <TextInput
-                placeholder="Password"
+                placeholder="Mot de passe"
                 secureTextEntry={true}
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, password: text })
                 }
             />
-            <Button
-                mode="contained"
-                onPress={() => signin(credentials.email, credentials.password)}
-            >
-                Sign In
-            </Button>
 
-            <Button mode="text" onPress={() => navigation.navigate("Signup")}>
-                Pas encore inscrit ? Créez un compte
+            <TextInput
+                placeholder="Confirmer le mot de passe"
+                secureTextEntry={true}
+                onChangeText={(text) =>
+                    setCredentials({ ...credentials, confirmPassword: text })
+                }
+            />
+
+            <Button mode="contained" onPress={handleSubmit}>
+                Sign Up
             </Button>
         </View>
     );
 };
 
-export default SigninScreen;
+export default SignupScreen;
 
 const styles = StyleSheet.create({
     container: {

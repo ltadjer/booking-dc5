@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import {createUserSchema, updateUserSchema} from "../schemas/userSchema";
+import { createUserSchema, updateUserSchema } from "../schemas/userSchema";
 import { UserService } from "../services/userService";
 import { ZodError } from "zod";
 
@@ -54,6 +54,31 @@ export const createUser = async (c: Context) => {
   }
 };
 
+export const updateUser = async (c: Context) => {
+  try {
+    const body = await c.req.json();
+    const validatedData = updateUserSchema.parse(body);
+
+    const userId = parseInt(c.req.param("id"));
+    if (!userId) {
+      return c.json({ error: "User ID is required" }, 400);
+    }
+
+    const user = await UserService.updateUser(userId, validatedData);
+    if (!user) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    return c.json(user);
+  } catch (error: unknown) {
+    console.error("Error updating user:", error);
+    if (error instanceof ZodError) {
+      return c.json({ error: "Invalid input data" }, 400);
+    }
+    return c.json({ error: "Failed to update user" }, 500);
+  }
+};
+
 export const getCurrentUser = async (c: Context) => {
   console.log("getCurrentUser", c.get("user"));
   try {
@@ -80,27 +105,3 @@ export const getCurrentUser = async (c: Context) => {
     return c.json({ error: "Failed to get current user" }, 500);
   }
 };
-
-export const updateUser = async (c: Context) => {
-    try {
-        const userContext = c.get("user");
-        const userId = userContext.userId;
-
-        if (!userId) {
-        return c.json({ error: "User not authenticated" }, 401);
-        }
-
-        const body = await c.req.json();
-        console.log("body : ", body);
-        const validatedData = updateUserSchema.parse(body);
-
-        const updatedUser = await UserService.updateUser(userId, validatedData);
-        return c.json(updatedUser);
-    } catch (error) {
-        console.error("Error updating user:", error);
-        if (error instanceof ZodError) {
-        return c.json({ error: "Invalid input data" }, 400);
-        }
-        return c.json({ error: "Failed to update user" }, 500);
-    }
-}

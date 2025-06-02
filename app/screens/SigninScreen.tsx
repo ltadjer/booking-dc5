@@ -15,16 +15,16 @@ const SigninScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text>Sign In</Text>
-
             <TextInput
-                placeholder="Email"
+                label="Email"
+                mode="outlined"
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, email: text })
                 }
             />
             <TextInput
-                placeholder="Password"
+                label="Mot de passe"
+                mode="outlined"
                 secureTextEntry={true}
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, password: text })
@@ -34,7 +34,7 @@ const SigninScreen = () => {
                 mode="contained"
                 onPress={() => signin(credentials.email, credentials.password)}
             >
-                Sign In
+                Se connecter
             </Button>
 
             <Button mode="text" onPress={() => navigation.navigate("Signup")}>

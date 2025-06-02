@@ -11,9 +11,15 @@ const fetchById = async (id: number) => {
     return response.data;
 }
 
+const create = async (classroomData: any) => {
+    const response = await api.post(ENDPOINT, classroomData);
+    return response.data;
+}
+
 const ClassroomService = {
     fetchAll,
     fetchById,
+    create,
 }
 
 export default ClassroomService;

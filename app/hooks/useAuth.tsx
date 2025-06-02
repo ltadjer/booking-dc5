@@ -1,33 +1,35 @@
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import AuthService from "../services/auth.service";
-import {removeToken, setToken} from "../utils/token";
-import UserService from "../services/user.service";
+import { removeToken, setToken } from "../utils/token";
 
 export const useAuth = () => {
-    const { user, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
 
-    const signin = async (email: string, password: string) => {
-        const response = await AuthService.signin(email, password);
-        await setToken(response.token);
-        setUser(response.user);
-    };
+  const signin = async (email: string, password: string) => {
+    const response = await AuthService.signin(email, password);
+    setUser(response.user);
+    setToken(response.token);
+  };
 
-    const signup = async (email: string, password: string, name: string) => {
-        const response = await AuthService.signup(email, password, name);
-        await setToken(response.token);
-        setUser(response.user);
-    };
+  const signup = async (email: string, password: string, name?: string) => {
+    try {
+      const response = await AuthService.signup(email, password, name);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      setUser(response.user);
+      setToken(response.token);
+    } catch (error) {
+      console.error("Error signing up:", error);
+      throw error;
+    }
+  };
 
-    const signout = async () => {
-        await removeToken();
-        setUser(null);
-    };
+  const signout = () => {
+    setUser(null);
+    removeToken();
+  };
 
-    const updateUser = async (user: { name: string; email: string }) => {
-        const updatedUser = await UserService.updateUser(user);
-        setUser(updatedUser);
-    };
-
-    return { user, signin, signout, signup, updateUser };
+  return { signout, signin, signup };
 };

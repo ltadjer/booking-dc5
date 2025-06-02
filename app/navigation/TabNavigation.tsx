@@ -1,8 +1,8 @@
-import ClassroomsScreen from "../screens/ClassroomsScreen";
 import ProfilScreen from "../screens/ProfilScreen";
 import ReservationsScreen from "../screens/ReservationsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import ClassroomStack from "./ClassroomStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -25,9 +25,21 @@ const TabNavigation = () => {
 
   return (
     <Tab.Navigator initialRouteName="Profil" screenOptions={screenOptions}>
-      <Tab.Screen name="Classrooms" component={ClassroomsScreen} />
-      <Tab.Screen name="Profil" component={ProfilScreen} />
-      <Tab.Screen name="Reservations" component={ReservationsScreen} />
+      <Tab.Screen
+        name="Classrooms"
+        component={ClassroomStack}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Profil"
+        component={ProfilScreen}
+        options={{ title: "Profil" }}
+      />
+      <Tab.Screen
+        name="Reservations"
+        component={ReservationsScreen}
+        options={{ title: "Mes réservations" }}
+      />
     </Tab.Navigator>
   );
 };

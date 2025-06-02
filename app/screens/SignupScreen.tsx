@@ -22,24 +22,25 @@ const SignupScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text>Sign Up</Text>
-
             <TextInput
-                placeholder="Nom d'utilisateur"
+                mode="outlined"
+                label="Nom d'utilisateur"
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, name: text })
                 }
             />
 
             <TextInput
-                placeholder="Email"
+                mode="outlined"
+                label="Email"
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, email: text })
                 }
             />
 
             <TextInput
-                placeholder="Mot de passe"
+                mode="outlined"
+                label="Mot de passe"
                 secureTextEntry={true}
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, password: text })
@@ -47,7 +48,8 @@ const SignupScreen = () => {
             />
 
             <TextInput
-                placeholder="Confirmer le mot de passe"
+                mode="outlined"
+                label="Confirmer le mot de passe"
                 secureTextEntry={true}
                 onChangeText={(text) =>
                     setCredentials({ ...credentials, confirmPassword: text })
@@ -55,7 +57,7 @@ const SignupScreen = () => {
             />
 
             <Button mode="contained" onPress={handleSubmit}>
-                Sign Up
+                S'inscrire
             </Button>
         </View>
     );

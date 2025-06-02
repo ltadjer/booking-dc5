@@ -1,25 +1,34 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, View, TextInput, Text } from "react-native";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import ClassroomService from "../services/classroom.service";
 import ClassroomCard from "../components/ClassroomCard";
-import { Button } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
+import AuthContext from "../context/AuthContext";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 const ClassroomsScreen = () => {
   const [classrooms, setClassrooms] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
-  const [filterName, setFilterName] = useState<string>("");
-  const [minCapacity, setMinCapacity] = useState<string>("");
-  const [sortField, setSortField] = useState<'name' | 'capacity' | null>(null);
-  const [sortAsc, setSortAsc] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredClassrooms, setFilteredClassrooms] = useState<any[]>([]);
+  const { user } = useContext(AuthContext);
+  const navigation = useNavigation();
 
-  // TODO: ajouter le filtre par équimenet
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+
   useEffect(() => {
     fetchAllClassrooms();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchAllClassrooms();
+    }, [])
+  );
+
   useEffect(() => {
     applyFiltersAndSort();
-  }, [classrooms, filterName, minCapacity, sortField, sortAsc]);
+  }, [classrooms, searchQuery, sortBy]);
 
   const fetchAllClassrooms = async () => {
     try {
@@ -30,94 +39,78 @@ const ClassroomsScreen = () => {
     }
   };
 
-  const applyFiltersAndSort = () => {
-    let data = [...classrooms];
-    // Filters
-    if (filterName.trim()) {
-      data = data.filter(c =>
-          c.name.toLowerCase().includes(filterName.trim().toLowerCase())
-      );
-    }
-    if (minCapacity.trim()) {
-      const cap = parseInt(minCapacity, 10);
-      if (!isNaN(cap)) {
-        data = data.filter(c => c.capacity >= cap);
-      }
-    }
-    // Sort
-    if (sortField) {
-      data.sort((a, b) => {
-        let diff = 0;
-        if (sortField === 'name') {
-          diff = a.name.localeCompare(b.name);
-        } else if (sortField === 'capacity') {
-          diff = a.capacity - b.capacity;
-        }
-        return sortAsc ? diff : -diff;
-      });
-    }
-    setFiltered(data);
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
   };
 
-  const onSort = (field: 'name' | 'capacity') => {
-    if (sortField === field) {
-      setSortAsc(!sortAsc); // toggle order
-    } else {
-      setSortField(field);
-      setSortAsc(true);
+  const applyFiltersAndSort = () => {
+    let filtered = classrooms.filter((classroom) => {
+      const lowerQuery = searchQuery.toLowerCase();
+      return (
+        classroom.name.toLowerCase().includes(lowerQuery) ||
+        classroom.equipment.some((equip) =>
+          equip.toLowerCase().includes(lowerQuery)
+        ) ||
+        classroom.capacity.toString().includes(lowerQuery)
+      );
+    });
+    if (sortBy === "name") {
+      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === "capacity") {
+      filtered = filtered.sort((a, b) => a.capacity - b.capacity);
     }
+
+    setFilteredClassrooms(filtered);
+  };
+
+  const handleSort = (criteria: string) => {
+    setSortBy(criteria);
+    setSelectedFilter(criteria);
   };
 
   return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Filtrer les salles</Text>
-        <TextInput
-            style={styles.input}
-            placeholder="Nom de la salle"
-            value={filterName}
-            onChangeText={setFilterName}
-        />
-        <TextInput
-            style={styles.input}
-            placeholder="Capacité min"
-            keyboardType="numeric"
-            value={minCapacity}
-            onChangeText={setMinCapacity}
-        />
-        <Button mode="contained" onPress={applyFiltersAndSort} style={styles.button}>
-          Appliquer
+    <ScrollView style={styles.container}>
+      {user?.role === "ADMIN" && (
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate("AddClassroom")}
+          style={styles.addButton}
+        >
+          Ajouter une salle
         </Button>
-
-        <Text style={styles.title}>Trier les salles</Text>
-        <View style={styles.sortButtons}>
-          <Button
-              mode={sortField === 'name' ? 'contained' : 'outlined'}
-              onPress={() => onSort('name')}
-              style={styles.sortButton}
-          >
-            Nom {sortField === 'name' && (sortAsc ? '▲' : '▼')}
-          </Button>
-          <Button
-              mode={sortField === 'capacity' ? 'contained' : 'outlined'}
-              onPress={() => onSort('capacity')}
-              style={styles.sortButton}
-          >
-            Capacité {sortField === 'capacity' && (sortAsc ? '▲' : '▼')}
-          </Button>
-        </View>
-
-        <View style={styles.list}>
-          {filtered.map(classroom => (
-              <ClassroomCard
-                  key={classroom.id}
-                  classroom={classroom}
-              />
-          ))}
-          {filtered.length === 0 && (
-              <Text style={styles.noResult}>Aucune salle trouvée.</Text>
-          )}
-        </View>
+      )}
+      <TextInput
+        label="Rechercher par nom ou équipement"
+        value={searchQuery}
+        onChangeText={handleSearch}
+        style={styles.searchInput}
+      />
+      <View style={styles.sortButtons}>
+        <Button
+          mode={selectedFilter === "name" ? "contained" : "outlined"}
+          onPress={() => handleSort("name")}
+          style={styles.sortButton}
+        >
+          Trier par Nom
+        </Button>
+        <Button
+          mode={selectedFilter === "capacity" ? "contained" : "outlined"}
+          onPress={() => handleSort("capacity")}
+          style={styles.sortButton}
+        >
+          Trier par Capacité
+        </Button>
       </View>
+
+      <View style={styles.list}>
+        {filteredClassrooms.map((classroom) => (
+          <ClassroomCard key={classroom.id} classroom={classroom} />
+        ))}
+        {filteredClassrooms.length === 0 && (
+          <Text style={styles.noResult}>Aucune salle trouvée.</Text>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -130,24 +123,31 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
     marginTop: 20,
   },
+  addButton: {
+    marginBottom: 20,
+  },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
+  searchInput: {
+    marginBottom: 20,
+    backgroundColor: "white",
+  },
   button: {
     marginBottom: 20,
   },
   sortButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   sortButton: {
@@ -156,12 +156,12 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: 10,
   },
   noResult: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 });

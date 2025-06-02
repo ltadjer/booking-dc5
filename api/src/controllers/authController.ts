@@ -22,6 +22,7 @@ const signInSchema = z.object({
 export const signUp = async (c: Context) => {
   try {
     const body = await c.req.json();
+    console.log('body', body);
     const validatedData = signUpSchema.parse(body);
 
     // Vérifier si l'utilisateur existe déjà
@@ -123,15 +124,5 @@ export const signIn = async (c: Context) => {
     }
     console.error("Erreur lors de la connexion:", error);
     return c.json({ error: "Erreur lors de la connexion" }, 500);
-  }
-};
-
-
-export const signOut = async (c: Context) => {
-  try {
-    return c.json({ message: "Déconnexion réussie" });
-  } catch (error) {
-    console.error("Erreur lors de la déconnexion:", error);
-    return c.json({ error: "Erreur lors de la déconnexion" }, 500);
   }
 };

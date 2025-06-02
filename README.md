@@ -47,26 +47,26 @@ npm install yup @hookform/resolvers
 ### Niveau 4 - Context
 
 - [x] Création d'un context pour l'authentification
-- [ ] Gestion du stockage du token avec AsyncStorage
+- [x] Gestion du stockage du token avec AsyncStorage
 
 ### Niveau 5 - Profil utilisateur
 
-- [ ] Création de l'écran de profil
-- [ ] Affichage des informations de l'utilisateur
-- [ ] Possibilité de modifier ses informations
+- [x] Création de l'écran de profil
+- [x] Affichage des informations de l'utilisateur
+- [x] Possibilité de modifier ses informations
 
 ### Niveau 6 - Apparence et fonctionnalités avancées
 
-- [ ] Création du composant Card pour les salles
-- [ ] Création de l'écran de détails d'une salle
-- [ ] Afficher la liste des réservations pour une salle
-- [ ] Ajouter un bouton pour réserver une salle
+- [x] Création du composant Card pour les salles
+- [x] Création de l'écran de détails d'une salle
+- [x] Afficher la liste des réservations pour une salle
+- [x] Ajouter un bouton pour réserver une salle
 
 ### Niveau 7 - Gestion des réservations pour l'utilisateur
 
-- [ ] Création de l'écran de gestion des réservations
-- [ ] Affichage des réservations en cours et passées
-- [ ] Possibilité de supprimer une réservation
+- [x] Création de l'écran de gestion des réservations
+- [x] Affichage des réservations en cours et passées
+- [x] Possibilité de supprimer une réservation
 
 ### Niveau 8 - Amélioration de l'expérience utilisateur
 

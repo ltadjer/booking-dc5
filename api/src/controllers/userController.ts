@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { createUserSchema } from "../schemas/userSchema";
+import {createUserSchema, updateUserSchema} from "../schemas/userSchema";
 import { UserService } from "../services/userService";
 import { ZodError } from "zod";
 
@@ -80,3 +80,27 @@ export const getCurrentUser = async (c: Context) => {
     return c.json({ error: "Failed to get current user" }, 500);
   }
 };
+
+export const updateUser = async (c: Context) => {
+    try {
+        const userContext = c.get("user");
+        const userId = userContext.userId;
+
+        if (!userId) {
+        return c.json({ error: "User not authenticated" }, 401);
+        }
+
+        const body = await c.req.json();
+        console.log("body : ", body);
+        const validatedData = updateUserSchema.parse(body);
+
+        const updatedUser = await UserService.updateUser(userId, validatedData);
+        return c.json(updatedUser);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        if (error instanceof ZodError) {
+        return c.json({ error: "Invalid input data" }, 400);
+        }
+        return c.json({ error: "Failed to update user" }, 500);
+    }
+}

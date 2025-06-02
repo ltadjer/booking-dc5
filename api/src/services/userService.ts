@@ -1,6 +1,6 @@
 import prisma from "../lib/prisma";
 import { hashPassword } from "../utils/password";
-import { CreateUserInput } from "../schemas/userSchema";
+import {CreateUserInput, UpdateUserInput} from "../schemas/userSchema";
 
 export class UserService {
   static async createUser(data: CreateUserInput) {
@@ -80,4 +80,20 @@ export class UserService {
       },
     });
   }
+
+    static async updateUser(id: number, data: Partial<UpdateUserInput>) {
+    console.log("updateUser", id, data);
+    return prisma.user.update({
+        where: { id },
+        data,
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+        });
+    }
 }

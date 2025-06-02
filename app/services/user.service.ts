@@ -9,8 +9,23 @@ export const fetchCurrentUser = async () => {
     response.data;
 };
 
+export const updateUser = async (user: { name: string; email: string }) => {
+    const token = await getToken();
+    const response = await api.put(`${ENDPOINT}/update`, user, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    if (response.status === 200) {
+        return response.data;
+    } else {
+        throw new Error('Failed to update user');
+    }
+}
+
 const UserService = {
     fetchCurrentUser,
+    updateUser,
 }
 
 export default UserService;

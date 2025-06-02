@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 
 const SignupScreen = () => {
     const [credentials, setCredentials] = useState({
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -17,12 +18,18 @@ const SignupScreen = () => {
             alert("Les mots de passe ne correspondent pas");
             return;
         }
-        signup(credentials.email, credentials.password);
-    };
+        signup(credentials.email, credentials.password, credentials.name);    };
 
     return (
         <View style={styles.container}>
             <Text>Sign Up</Text>
+
+            <TextInput
+                placeholder="Nom d'utilisateur"
+                onChangeText={(text) =>
+                    setCredentials({ ...credentials, name: text })
+                }
+            />
 
             <TextInput
                 placeholder="Email"

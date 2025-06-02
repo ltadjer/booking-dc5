@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "../utils/token";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://10.33.160.231:8000/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -9,6 +9,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 
 api.interceptors.request.use(async (config) => {
   const token = await getToken();

@@ -6,8 +6,14 @@ const fetchAll = async () => {
     return response.data;
 }
 
+const fetchById = async (id: number) => {
+    const response = await api.get(`${ENDPOINT}/${id}`);
+    return response.data;
+}
+
 const ClassroomService = {
-    fetchAll
+    fetchAll,
+    fetchById,
 }
 
 export default ClassroomService;

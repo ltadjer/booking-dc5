@@ -35,7 +35,9 @@ export const createReservation = async (c: Context) => {
 
 export const getMyReservations = async (c: Context) => {
   try {
-    const userId = c.get("userId");
+    const userContext = c.get("user");
+    const userId = userContext.userId;
+
     if (!userId) {
       return c.json({ error: "User not authenticated" }, 401);
     }
@@ -56,7 +58,7 @@ export const getClassroomReservations = async (c: Context) => {
     }
 
     const reservations = await ReservationService.getReservationsByClassroom(
-      classroomId
+        classroomId
     );
     return c.json(reservations);
   } catch (error) {
@@ -86,7 +88,9 @@ export const getReservationById = async (c: Context) => {
 
 export const deleteReservation = async (c: Context) => {
   try {
-    const userId = c.get("userId");
+    const userContext = c.get("user");
+    console.log("userContext : ", userContext);
+    const userId = userContext.userId;
     if (!userId) {
       return c.json({ error: "User not authenticated" }, 401);
     }
